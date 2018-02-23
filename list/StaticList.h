@@ -14,25 +14,28 @@ public:
 	StaticList<T, N>& operator=(const StaticList<T, N>& stl);
 	~StaticList();
 
-	virtual size_type insert(size_type n, const_reference e) {
-		CHECK_INDEX_OUT_OF_BOUNDS(n <= m_len && (m_len + 1) <= N);
-
-		for (size_type i = m_len; i > n; --i) {
-			m_arr[i] = m_arr[i - 1];
-		}
-
-		m_arr[n] = new T(e);
-		CHECK_NO_MEMORY_EXCEPTION(m_arr[n]);
-		++m_len;
-
-		return n;
-	}
+	virtual size_type insert(size_type n, const_reference e);
 
 	virtual size_type capacity() { return N; }
 
 protected:
 	T *m_space[N];
 };
+
+template<typename T, size_t N>
+typename StaticList<T,N>::size_type StaticList<T,N>::insert(size_type n, const_reference e) {
+	CHECK_INDEX_OUT_OF_BOUNDS(n <= m_len && (m_len + 1) <= N);
+
+	for (size_type i = m_len; i > n; --i) {
+		m_arr[i] = m_arr[i - 1];
+	}
+
+	m_arr[n] = new T(e);
+	CHECK_NO_MEMORY_EXCEPTION(m_arr[n]);
+	++m_len;
+
+	return n;
+}
 
 template<typename T, size_t N>
 StaticList<T, N>::StaticList(const StaticList<T, N>& stl) {

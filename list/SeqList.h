@@ -34,7 +34,7 @@ protected:
 };
 
 template<typename T>
-size_t SeqList<T>::remove(size_t i) {
+typename SeqList<T>::size_type SeqList<T>::remove(size_t i) {
 	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
 
 	delete m_arr[i];
@@ -72,14 +72,14 @@ void SeqList<T>::set(size_type i, const_reference e) {
 }
 
 template<typename T>
-T& SeqList<T>::get(size_type i) {
+typename SeqList<T>::reference SeqList<T>::get(size_type i) {
 	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
 
 	return *m_arr[i];
 }
 
 template<typename T>
-const T& SeqList<T>::get(size_type i) const {
+typename SeqList<T>::const_reference SeqList<T>::get(size_type i) const {
 	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
 
 	return *m_arr[i];

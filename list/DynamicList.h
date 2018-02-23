@@ -16,22 +16,7 @@ public:
 	DynamicList<T>& operator=(const DynamicList<T>& stl);
 	~DynamicList();
 
-	virtual size_type insert(size_type n, const_reference e) {
-		CHECK_INDEX_OUT_OF_BOUNDS(n <= m_len);
-
-		if (m_len == m_capacity)
-			grow();
-
-		for (size_type i = m_len; i > n; --i) {
-			m_arr[i] = m_arr[i - 1];
-		}
-
-		m_arr[n] = new T(e);
-		CHECK_NO_MEMORY_EXCEPTION(m_arr[n]);
-		++m_len;
-
-		return n;
-	}
+	virtual size_type insert(size_type n, const_reference e);
 
 	virtual size_type capacity() { return m_capacity; }
 
@@ -111,6 +96,24 @@ DynamicList<T>::~DynamicList() {
 		delete m_arr[i];
 	}
 	delete[] m_arr;
+}
+
+template<typename T>
+typename DynamicList<T>::size_type DynamicList<T>::insert(size_type n, const_reference e) {
+	CHECK_INDEX_OUT_OF_BOUNDS(n <= m_len);
+
+	if (m_len == m_capacity)
+		grow();
+
+	for (size_type i = m_len; i > n; --i) {
+		m_arr[i] = m_arr[i - 1];
+	}
+
+	m_arr[n] = new T(e);
+	CHECK_NO_MEMORY_EXCEPTION(m_arr[n]);
+	++m_len;
+
+	return n;
 }
 
 template<typename T>

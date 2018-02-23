@@ -23,14 +23,14 @@ protected:
 };
 
 template<typename T, size_t N>
-T& StaticArray<T, N>::get(size_type i) {
+typename StaticArray<T, N>::reference StaticArray<T, N>::get(size_type i) {
 	CHECK_INDEX_OUT_OF_BOUNDS(i < N);
 
 	return m_space[i];
 }
 
 template<typename T, size_t N>
-const T& StaticArray<T, N>::get(size_type i) const {
+typename StaticArray<T, N>::const_reference StaticArray<T, N>::get(size_type i) const {
 	CHECK_INDEX_OUT_OF_BOUNDS(i < N);
 
 	return m_space[i];
