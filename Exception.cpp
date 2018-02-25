@@ -16,6 +16,8 @@ Exception::Exception(const char* message, const char* file, int line) {
 		char buffer[16] = { 0 };
 		itoa(line, buffer, 10);
 
+		// m_location = new char[strlen(file) + strlen(buffer) + 2];
+		// m_location = (char*)::operator new(strlen(file) + strlen(buffer) + 2);
 		m_location = (char*)malloc(sizeof(char) * (strlen(file) + strlen(buffer) + 2));
 
 		if (m_location) {
