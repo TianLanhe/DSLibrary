@@ -34,7 +34,7 @@ protected:
 };
 
 template<typename T>
-typename SeqList<T>::size_type SeqList<T>::remove(size_t i) {
+typename SeqList<T>::size_type SeqList<T>::remove(size_type i) {
 	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
 
 	delete m_arr[i];

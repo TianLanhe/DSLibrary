@@ -20,6 +20,12 @@ public:
 
 	virtual size_type capacity() { return m_capacity; }
 
+	void resize(size_type, const_reference val = T()); // Review
+	void reserve(size_type n) {		// Review : 多次reallocate导致性能下降 
+		while (m_capacity < n)	
+			grow();
+	}
+
 private:
 	void grow();
 
@@ -126,6 +132,18 @@ void DynamicList<T>::grow() {
 	for (size_type i = 0; i < m_len; ++i)
 		m_arr[i] = temp[i];
 	delete[] temp;
+}
+
+template<typename T>
+void DynamicList<T>::resize(size_type n, const_reference val) {
+	if (m_len < n) {
+		for (size_type i = m_len; i < n; ++i)
+			insert(i, val);
+	}
+	else if (m_len > n) {
+		for (size_type i = m_len - 1; i >= n; --i)
+			remove(i);
+	}
 }
 
 DSLIB_END
