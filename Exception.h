@@ -69,6 +69,28 @@ namespace DSLib {
 	protected:
 		virtual const char* getName();
 	};
+
+	// 非法操作异常
+	class InvalidOperationException : public Exception {
+	public:
+		InvalidOperationException() {}
+		explicit InvalidOperationException(const char* message) :Exception(message) {}
+		InvalidOperationException(const char* message, const char* file, int line) :Exception(message, file, line) {}
+	
+	protected:
+		virtual const char* getName();
+	};
+
+	// 非法状态异常
+	class ErrorStateException : public Exception {
+	public:
+		ErrorStateException() {}
+		explicit ErrorStateException(const char* message) :Exception(message) {}
+		ErrorStateException(const char* message, const char* file, int line) :Exception(message, file, line) {}
+
+	protected:
+		virtual const char* getName();
+	};
 }
 
 #endif // !EXCEPTION_H

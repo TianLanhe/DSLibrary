@@ -14,7 +14,15 @@ DSLIB_BEGIN
 
 #define CHECK_NO_MEMORY_EXCEPTION(pointer)	\
 	if((pointer) == nullptr)				\
-		THROW_EXCEPTION(NoMemoryException,"No Enough Memory To Create Object");
+		THROW_EXCEPTION(NoMemoryException,"No Enough Memory To Create Object")
+
+#define CHECK_PARAMETER_EXCEPTION(cond)	\
+	if(!(cond))							\
+		THROW_EXCEPTION(InvalidParameterException,"Paramter Is Invalid")
+
+#define CHECK_STATE_EXCEPTION(cond)	\
+	if(!(cond))						\
+		THROW_EXCEPTION(ErrorStateException,"Abnormal State Occurs")
 
 // 数据结构基类
 template<typename T>

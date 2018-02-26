@@ -81,3 +81,11 @@ const char* InvalidParameterException::getName() {
 const char* NoMemoryException::getName() {
 	return "no enough memory exception";
 }
+
+const char* InvalidOperationException::getName() {
+	return "invalid operation exception";
+}
+
+const char* ErrorStateException::getName() {
+	return "error state exception";
+}
