@@ -31,8 +31,6 @@ public:
 
 	virtual void resize(size_type, const_reference val = T()) = 0;
 
-	virtual void merge(reference) = 0;
-
 	virtual reference get(size_type i);
 	virtual const_reference get(size_type i) const;
 	virtual void set(size_type i, const_reference val);

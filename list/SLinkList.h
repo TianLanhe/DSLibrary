@@ -24,8 +24,6 @@ public:
 
 	virtual void resize(size_type, const_reference val = T());
 
-	virtual void merge(reference);
-
 protected:
 	SNode<T>* locate(size_type) const;
 
@@ -197,11 +195,6 @@ void SLinkList<T>::resize(size_type n, const_reference val) {
 			++m_len;
 		}
 	}
-}
-
-template < typename T >
-void SLinkList<T>::merge(reference) {
-	// TODO
 }
 
 DSLIB_END
