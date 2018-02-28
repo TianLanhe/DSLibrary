@@ -9,66 +9,38 @@ template < typename T, size_t N >
 class StaticList : public SeqList<T> {
 
 public:
-	StaticList() { m_arr = m_space; }
+	StaticList() : SeqList<T>(N) { }
 	StaticList(const StaticList<T, N>& stl);
-	StaticList<T, N>& operator=(const StaticList<T, N>& stl);
-	~StaticList();
-
-	virtual size_type insert(size_type n, const_reference e);
+	StaticList<T, N>& operator=(StaticList<T, N> stl);
 
 	virtual size_type capacity() { return N; }
 
-protected:
-	T *m_space[N];
+	virtual void swap(StaticList<T, N>&);
 };
 
-template<typename T, size_t N>
-typename StaticList<T,N>::size_type StaticList<T,N>::insert(size_type n, const_reference e) {
-	CHECK_INDEX_OUT_OF_BOUNDS(n <= m_len && (m_len + 1) <= N);
-
-	for (size_type i = m_len; i > n; --i) {
-		m_arr[i] = m_arr[i - 1];
-	}
-
-	m_arr[n] = new T(e);
-	CHECK_NO_MEMORY_EXCEPTION(m_arr[n]);
-	++m_len;
-
-	return n;
+template < typename T, size_t N >
+void swap(StaticList<T, N>& a, StaticList<T, N> b) {
+	a.swap(b);
 }
 
 template<typename T, size_t N>
-StaticList<T, N>::StaticList(const StaticList<T, N>& stl) {
-	m_arr = m_space;
-	for (size_type i = 0; i < stl.m_len; ++i) {
-		m_arr[i] = new T(*stl.m_arr[i]);
-		CHECK_NO_MEMORY_EXCEPTION(m_arr[i]);
+StaticList<T, N>::StaticList(const StaticList<T, N>& obj) :SeqList<T>(obj.m_len) {
+	for (size_type i = 0; i < obj.m_len; ++i) {
+		m_alloc.construct(&m_arr[i], obj.m_arr[i]);
+		++m_len;
 	}
-	m_len = stl.m_len;
 }
 
-
 template<typename T, size_t N>
-StaticList<T, N>& StaticList<T, N>::operator=(const StaticList<T, N>& sql) {
-	if (this != &sql) {
-		for (size_type i = 0; i < sql.m_len; ++i) {
-			*m_arr[i] = *sql.m_arr[i];
-		}
+StaticList<T, N>& StaticList<T, N>::operator=(StaticList<T, N> sql) {
+	swap(sql);
 
-		for (size_type i = sql.m_len; i < m_len; ++i) {
-			delete m_arr[i];
-		}
-		m_len = sql.m_len;
-	}
 	return *this;
 }
 
 template<typename T, size_t N>
-StaticList<T, N>::~StaticList() {
-	size_type i = m_len;
-	while (i-- > 0) {
-		delete m_arr[i];
-	}
+void StaticList<T, N>::swap(StaticList<T, N>& obj) {
+	SeqList<T>::swap(obj);
 }
 
 DSLIB_END
