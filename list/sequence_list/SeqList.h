@@ -1,10 +1,10 @@
 #ifndef SEQ_LIST_H
 #define SEQ_LIST_H
 
-#include "List.h"
-#include "../Exception.h"
-#include "../Allocator.h"
-#include "../Utility.h"
+#include "../List.h"
+#include "../../Exception.h"
+#include "../../Allocator.h"
+#include "../../Utility.h"
 
 DSLIB_BEGIN
 

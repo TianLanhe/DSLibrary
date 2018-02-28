@@ -69,7 +69,6 @@ void CLinkList<T, Alloc>::clear() {
 		--m_len;
 
 		m_alloc.destroy(temp);
-		// delete temp;
 	}
 
 	CHECK_STATE_EXCEPTION(m_len == 0);

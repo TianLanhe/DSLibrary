@@ -1,7 +1,7 @@
 #ifndef LINK_LIST_H
 #define LINK_LIST_H
 
-#include "List.h"
+#include "../List.h"
 
 DSLIB_BEGIN
 
