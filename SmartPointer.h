@@ -1,6 +1,8 @@
 #ifndef SMART_POINTER_H
 #define SMART_POINTER_H
 
+#include "Exception.h"
+
 namespace DSLib {
 
 	template<typename T>
@@ -34,11 +36,15 @@ namespace DSLib {
 
 	template<typename T>
 	void SmartPointer<T>::_attach(T *p) {
-		m_pointer = p;
-		if (m_pointer)
+		if (p) {
 			m_counter = new size_t(1);
-		else
+			if (m_counter == nullptr)
+				THROW_EXCEPTION(NoMemoryException, "no memory to create reference counter.");
+		}
+		else {
 			m_counter = nullptr;
+		}
+		m_pointer = p;
 	}
 
 	template<typename T>
