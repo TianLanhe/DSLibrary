@@ -2,6 +2,7 @@
 #define SINGLE_LINK_LIST_H
 
 #include "LinkList.h"
+#include "../MemoryManager.h"
 
 DSLIB_BEGIN
 
@@ -129,8 +130,7 @@ typename SLinkList<T, Alloc>::size_type SLinkList<T, Alloc>::remove(size_type i)
 
 	// 修改游标相关数据，为了异常安全，把delete放在最后
 	if (m_cur == del) {
-		m_cur = nullptr;
-		m_step = 0;
+		m_cur = del->next;
 	}
 
 	m_alloc.destroy(del);
@@ -198,6 +198,7 @@ void SLinkList<T, Alloc>::resize(size_type n, const_reference val) {
 			// node = new SNode<T>(val);
 			CHECK_NO_MEMORY_EXCEPTION(node);
 
+			node->next = tail->next;
 			tail->next = node;
 			tail = node;
 
