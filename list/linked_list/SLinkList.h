@@ -284,6 +284,12 @@ void SLinkList<T, Alloc>::resize(size_type n, const_reference val) {
 
 			--m_len;
 
+			// 可能会改变游标
+			if (m_cur == node) {
+				m_cur = nullptr;
+				m_step = 0;
+			}
+
 			m_alloc.destroy(node);
 			// delete node;
 		}
