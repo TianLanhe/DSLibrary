@@ -27,7 +27,7 @@ public:
 };
 
 template < typename T, typename Alloc >
-CLinkList<T, Alloc>::CLinkList(const CLinkList<T, Alloc>& obj) :m_len(0), m_cur(nullptr), m_step(0) {
+CLinkList<T, Alloc>::CLinkList(const CLinkList<T, Alloc>& obj) {
 	m_head = m_alloc.allocate();
 	CHECK_NO_MEMORY_EXCEPTION(m_head);
 	m_head->next = nullptr;
@@ -59,7 +59,7 @@ CLinkList<T, Alloc>& CLinkList<T, Alloc>::operator=(CLinkList<T, Alloc>& obj) {
 template < typename T, typename Alloc >
 CLinkList<T, Alloc>::~CLinkList() {
 	clear();
-
+							// clear 后只剩头结点，此时 next 置空变成单链表交由单链表析构函数销毁
 	m_head->next = nullptr;	// Review : 感觉这一步怪怪的
 }
 
