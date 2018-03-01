@@ -9,7 +9,7 @@ template < typename T, size_t N >
 class StaticSLinkList : public SLinkList<T, StaticMemoryManager<SNode<T>,N+1> > {
 
 public:
-	size_type capacity() { return N; }
+	size_type capacity() const { return N; }
 
 };
 

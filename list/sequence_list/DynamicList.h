@@ -17,7 +17,7 @@ public:
 
 	virtual size_type insert(size_type n, const_reference e);
 
-	virtual size_type capacity() { return m_capacity; }
+	virtual size_type capacity() const { return m_capacity; }
 
 	void resize(size_type, const_reference val = T());
 	void reserve(size_type n) { grow(n); }

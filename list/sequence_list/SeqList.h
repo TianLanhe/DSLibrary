@@ -30,7 +30,7 @@ public:
 
 	virtual size_type size() const { return m_len; }
 
-	virtual size_type capacity() = 0;
+	virtual size_type capacity() const = 0;
 
 protected:
 

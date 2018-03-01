@@ -24,6 +24,10 @@ DSLIB_BEGIN
 	if(!(cond))						\
 		THROW_EXCEPTION(ErrorStateException,"Abnormal State Occurs")
 
+#define CHECK_OPERATION_EXCEPTION(cond)	\
+	if(!(cond))							\
+		THROW_EXCEPTION(InvalidOperationException,"Operation Is Invalid")
+
 // 数据结构基类
 template<typename T>
 class Object {

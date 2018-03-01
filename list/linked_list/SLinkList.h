@@ -2,9 +2,21 @@
 #define SINGLE_LINK_LIST_H
 
 #include "LinkList.h"
-#include "../MemoryManager.h"
+#include "../../MemoryManager.h"
 
 DSLIB_BEGIN
+
+// 单链表节点类型 SNode
+template < typename T >
+struct SNode {
+
+	SNode() :next(nullptr) { }
+	SNode(SNode<T>* const n) :next(n) { }
+	SNode(const T& v, SNode<T>* const n = nullptr) :next(n), val(v) { }
+
+	T val;
+	SNode<T> *next;
+};
 
 template < typename T, typename Alloc = DefaultMemoryManager<SNode<T>> >	// 使用默认内存分配/回收方式
 class SLinkList : public LinkList<T> {
@@ -21,15 +33,32 @@ public:
 
 	virtual void reverse();
 
+	virtual void resize(size_type, const_reference val = T());
+
 	virtual void swap(SLinkList<T, Alloc>& obj);
 
-	virtual void resize(size_type, const_reference val = T());
+	virtual reference get(size_type i);
+	virtual const_reference get(size_type i) const;
+	virtual void set(size_type i, const_reference val);
+
+	virtual void move(size_type, size_type step = 1);
+	virtual void next();
+	virtual bool end() const { return m_cur == nullptr; }
+	virtual reference current();
+	virtual const_reference current() const;
+
+	virtual size_type size() const { return m_len; }
 
 protected:
 	SNode<T>* locate(size_type) const;
 
 	SNode<T> *m_head;
+	size_type m_len;
+
 	Alloc m_alloc;
+
+	SNode<T> *m_cur;
+	size_type m_step;
 };
 
 template < typename T, typename Alloc > inline
@@ -38,7 +67,7 @@ void swap(SLinkList<T, Alloc>& a, SLinkList<T, Alloc>& b) {
 }
 
 template < typename T, typename Alloc >
-SLinkList<T, Alloc>::SLinkList() {
+SLinkList<T, Alloc>::SLinkList() :m_len(0), m_cur(nullptr), m_step(0) {
 	m_head = m_alloc.allocate();
 	// m_head = (SNode<T>*)(::operator new(sizeof(SNode<T>)));
 
@@ -48,7 +77,7 @@ SLinkList<T, Alloc>::SLinkList() {
 }
 
 template < typename T, typename Alloc >
-SLinkList<T, Alloc>::SLinkList(const SLinkList<T, Alloc>& obj) {
+SLinkList<T, Alloc>::SLinkList(const SLinkList<T, Alloc>& obj) :m_len(0), m_cur(nullptr), m_step(0) {
 	m_head = m_alloc.allocate();
 	// m_head = (SNode<T>*)(::operator new(sizeof(SNode<T>)));
 	CHECK_NO_MEMORY_EXCEPTION(m_head);
@@ -82,12 +111,22 @@ SLinkList<T, Alloc>::~SLinkList() {
 }
 
 template < typename T, typename Alloc >
-void SLinkList<T, Alloc>::swap(SLinkList<T, Alloc>& obj) {
-	SNode<T> *temp = obj.m_head;
-	obj.m_head = m_head;
+void SLinkList<T, Alloc>::swap(SLinkList<T, Alloc>& b) {
+	SNode<T> *temp = b.m_head;
+	b.m_head = m_head;
 	m_head = temp;
 
-	LinkList<T>::swap(obj);
+	temp = m_cur;
+	m_cur = b.m_cur;
+	b.m_cur = temp;
+
+	size_type tmp = m_len;
+	m_len = b.m_len;
+	b.m_len = tmp;
+
+	tmp = m_step;
+	m_step = b.m_step;
+	b.m_step = tmp;
 }
 
 template < typename T, typename Alloc >
@@ -157,6 +196,65 @@ void SLinkList<T, Alloc>::clear() {
 	// 修改游标相关数据
 	m_cur = nullptr;
 	m_step = 0;
+}
+
+template < typename T, typename Alloc >
+typename SLinkList<T, Alloc>::const_reference SLinkList<T, Alloc>::get(size_type i) const {
+	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
+
+	return locate(i)->val;
+}
+
+template < typename T, typename Alloc >
+typename SLinkList<T, Alloc>::reference SLinkList<T, Alloc>::get(size_type i) {
+	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
+
+	return locate(i)->val;
+}
+
+template < typename T, typename Alloc >
+void SLinkList<T, Alloc>::set(size_type i, const_reference val) {
+	CHECK_INDEX_OUT_OF_BOUNDS(i < m_len);
+
+	locate(i)->val = val;
+}
+
+template < typename T, typename Alloc >
+void SLinkList<T, Alloc>::move(size_type pos, size_type step) {
+	CHECK_INDEX_OUT_OF_BOUNDS(pos <= m_len);	// 允许 move 到不存在的 m_len 位置，表示移动到末尾
+	CHECK_PARAMETER_EXCEPTION(step != 0);
+
+	if (pos == m_len) {
+		m_cur = nullptr;
+		m_step = 0;
+	}
+	else {
+		m_cur = locate(pos);
+		m_step = step;
+	}
+}
+
+template < typename T, typename Alloc >
+void SLinkList<T, Alloc>::next() {
+	if (end())
+		return;
+
+	for (size_type i = 0; i < m_step && m_cur; ++i)
+		m_cur = m_cur->next;
+}
+
+template < typename T, typename Alloc >
+typename SLinkList<T, Alloc>::const_reference SLinkList<T, Alloc>::current() const {
+	CHECK_OPERATION_EXCEPTION(m_cur);
+
+	return m_cur->val;
+}
+
+template < typename T, typename Alloc >
+typename SLinkList<T, Alloc>::reference SLinkList<T, Alloc>::current() {
+	CHECK_OPERATION_EXCEPTION(m_cur);
+
+	return m_cur->val;
 }
 
 template < typename T, typename Alloc >

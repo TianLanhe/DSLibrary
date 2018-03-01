@@ -13,7 +13,7 @@ public:
 	StaticList(const StaticList<T, N>& stl);
 	StaticList<T, N>& operator=(StaticList<T, N> stl);
 
-	virtual size_type capacity() { return N; }
+	virtual size_type capacity() const { return N; }
 
 	virtual void swap(StaticList<T, N>&);
 };
