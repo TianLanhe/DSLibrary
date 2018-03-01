@@ -1,5 +1,5 @@
 #ifndef STATIC_SEQ_LIST_H
-#define STSTIC_SEQ_LIST_H
+#define STATIC_SEQ_LIST_H
 
 #include "SeqList.h"
 
