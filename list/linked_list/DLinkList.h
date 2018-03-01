@@ -52,7 +52,7 @@ public:
 	virtual size_type size() const { return m_len; }
 
 protected:
-	DNode<T>* locate(size_type) const;
+	virtual DNode<T>* locate(size_type) const;
 
 	DNode<T> *m_head;
 	size_type m_len;

@@ -11,7 +11,7 @@ class CLinkList : public SLinkList<T, Alloc> {
 public:
 	CLinkList() { m_head->next = m_head; }
 	CLinkList(const CLinkList<T, Alloc>& obj);
-	CLinkList<T, Alloc>& operator=(CLinkList<T, Alloc>&);
+	CLinkList<T, Alloc>& operator=(CLinkList<T, Alloc>);
 	~CLinkList();
 
 	virtual size_type remove(size_type);
@@ -26,6 +26,11 @@ public:
 
 };
 
+template < typename T, typename Alloc > inline
+void swap(CLinkList<T, Alloc>& a, CLinkList<T, Alloc> b) {
+	a.swap(b);
+}
+
 template < typename T, typename Alloc >
 CLinkList<T, Alloc>::CLinkList(const CLinkList<T, Alloc>& obj) {
 	m_head = m_alloc.allocate();
@@ -34,23 +39,17 @@ CLinkList<T, Alloc>::CLinkList(const CLinkList<T, Alloc>& obj) {
 
 	SNode<T> *head = m_head;
 	for (SNode<T> *ptrH = obj.m_head->next; ptrH != obj.m_head; ptrH = ptrH->next) {
-		head->next = m_alloc.create(ptrH->val);
+		head->next = m_alloc.create(ptrH->val,m_head);
 		CHECK_NO_MEMORY_EXCEPTION(head->next);
 
 		head = head->next;
 
 		++m_len;
 	}
-	head->next = m_head;
-}
-
-template < typename T, typename Alloc > inline
-void swap(CLinkList<T, Alloc>& a, CLinkList<T, Alloc> b) {
-	a.swap(b);
 }
 
 template < typename T, typename Alloc >
-CLinkList<T, Alloc>& CLinkList<T, Alloc>::operator=(CLinkList<T, Alloc>& obj) {
+CLinkList<T, Alloc>& CLinkList<T, Alloc>::operator=(CLinkList<T, Alloc> obj) {
 	swap(obj);
 
 	return *this;
@@ -122,6 +121,12 @@ void CLinkList<T, Alloc>::resize(size_type n, const_reference val) {
 			tail->next = node->next;
 
 			--m_len;
+
+			// 可能会改变游标
+			if (m_cur == node) {
+				m_cur = nullptr;
+				m_step = 0;
+			}
 
 			m_alloc.destroy(node);
 		}
