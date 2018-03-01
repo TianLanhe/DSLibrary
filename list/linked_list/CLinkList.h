@@ -10,7 +10,7 @@ class CLinkList : public SLinkList<T, Alloc> {
 
 public:
 	CLinkList() { m_head->next = m_head; }
-	CLinkList(const CLinkList<T, Alloc>& obj) :SLinkList<T, Alloc>(obj) { locate(m_len - 1)->next = m_head; }
+	CLinkList(const CLinkList<T, Alloc>& obj);
 	CLinkList<T, Alloc>& operator=(CLinkList<T, Alloc>&);
 	~CLinkList();
 
@@ -25,6 +25,24 @@ public:
 	virtual void next();
 
 };
+
+template < typename T, typename Alloc >
+CLinkList<T, Alloc>::CLinkList(const CLinkList<T, Alloc>& obj) :m_len(0), m_cur(nullptr), m_step(0) {
+	m_head = m_alloc.allocate();
+	CHECK_NO_MEMORY_EXCEPTION(m_head);
+	m_head->next = nullptr;
+
+	SNode<T> *head = m_head;
+	for (SNode<T> *ptrH = obj.m_head->next; ptrH != obj.m_head; ptrH = ptrH->next) {
+		head->next = m_alloc.create(ptrH->val);
+		CHECK_NO_MEMORY_EXCEPTION(head->next);
+
+		head = head->next;
+
+		++m_len;
+	}
+	head->next = m_head;
+}
 
 template < typename T, typename Alloc > inline
 void swap(CLinkList<T, Alloc>& a, CLinkList<T, Alloc> b) {
