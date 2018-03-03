@@ -22,12 +22,19 @@ public:
 	void resize(size_type, const_reference val = T());
 	void reserve(size_type n) { grow(n); }
 
+	virtual void swap(DynamicList<T>& obj) { SeqList<T>::swap(obj); }
+
 private:
 	void grow(size_type n = 0);
 
 protected:
 	size_type m_capacity;
 };
+
+template<typename T>
+void swap(DynamicList<T>& a, DynamicList<T>& b) {
+	a.swap(b);
+}
 
 template<typename T>
 DynamicList<T>::DynamicList(const DynamicList<T>& dl) {

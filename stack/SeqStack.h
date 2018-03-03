@@ -6,7 +6,7 @@
 
 DSLIB_BEGIN
 
-template < typename T>
+template < typename T >
 using SeqStack = Stack<T, DynamicList<T>>;
 
 

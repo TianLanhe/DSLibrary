@@ -15,7 +15,7 @@ public:
 
 	virtual size_type capacity() const { return N; }
 
-	virtual void swap(StaticList<T, N>&);
+	virtual void swap(StaticList<T, N>& obj) { SeqList<T>::swap(obj); }
 };
 
 template < typename T, size_t N >
@@ -36,11 +36,6 @@ StaticList<T, N>& StaticList<T, N>::operator=(StaticList<T, N> sql) {
 	swap(sql);
 
 	return *this;
-}
-
-template<typename T, size_t N>
-void StaticList<T, N>::swap(StaticList<T, N>& obj) {
-	SeqList<T>::swap(obj);
 }
 
 DSLIB_END
