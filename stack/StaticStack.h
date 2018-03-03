@@ -7,7 +7,12 @@
 DSLIB_BEGIN
 
 template < typename T, size_t N>
-using StaticStack = ContainerStack<T, StaticList<T, N>>;
+class StaticStack : public ContainerStack<T, StaticList<T, N>> {
+
+public:
+	size_type capacity() { return N; }
+
+};
 
 
 DSLIB_END

@@ -27,6 +27,8 @@ public:
 
 	virtual void swap(StaticQueue<T, N>& obj);
 
+	virtual size_type capacity() { return N; }
+
 private:
 
 	size_type nextIndex(size_type pos) { return (pos + 1) % (N + 1); }
