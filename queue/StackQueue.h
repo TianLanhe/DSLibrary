@@ -21,6 +21,8 @@ public:
 
 	virtual size_type size() const { return m_in.size() + m_out.size(); }
 
+	virtual void swap(StackQueue<T, Stack>& obj) { m_in.swap(obj.m_in); m_out.swap(obj.m_out); }
+
 private:
 	void transfer(Stack& a, Stack& b, size_type n) const;			// 从a将n个栈顶元素转移到b中
 	void transfer() const { transfer(m_in, m_out, m_in.size()); }		// 将进入栈的所有元素转移到b中
@@ -29,6 +31,11 @@ private:
 	mutable Stack m_out;
 
 };
+
+template < typename T, typename Stack = SeqStack<T> >
+void swap(StackQueue<T, Stack>& a, StackQueue<T, Stack>& b) {
+	a.swap(b);
+}
 
 template < typename T, typename Stack >
 typename StackQueue<T, Stack>::reference StackQueue<T, Stack>::back() {
