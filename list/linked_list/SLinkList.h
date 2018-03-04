@@ -52,6 +52,8 @@ public:
 protected:
 	SNode<T>* locate(size_type) const;
 
+	SNode<T>* __reverse(SNode<T>*);		// 递归实现链表装置的函数
+
 	SNode<T> *m_head;
 	size_type m_len;
 
@@ -258,7 +260,24 @@ typename SLinkList<T, Alloc>::reference SLinkList<T, Alloc>::current() {
 }
 
 template < typename T, typename Alloc >
+SNode<T>* SLinkList<T, Alloc>::__reverse(SNode<T>* node){
+	if (node == nullptr)
+		return nullptr;
+	else if (node->next == nullptr)
+		return node;
+	else {
+		SNode<T>* ret;
+		SNode<T>* next = node->next;
+		ret = __reverse(node->next);	// 后半部分转置，返回已转置部分的第一个结点，最后用于头结点与该节点链接
+		next->next = node;				// next 成为后半部分已经转置的链表的最后一个
+		node->next = nullptr;			// next指向前半部分，前半部分指向空
+		return ret;
+	}
+}
+
+template < typename T, typename Alloc >
 void SLinkList<T, Alloc>::reverse() {
+	// 链表转置循环实现
 	SNode<T> *cur = m_head->next;
 	SNode<T> *pre = nullptr;
 
@@ -271,6 +290,10 @@ void SLinkList<T, Alloc>::reverse() {
 	}
 
 	m_head->next = pre;
+
+	/*	链表转置递归实现
+	SNode<T>* ret = __reverse(m_head->next);
+	m_head->next = ret; */
 }
 
 template < typename T, typename Alloc >
