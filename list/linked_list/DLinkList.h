@@ -3,6 +3,7 @@
 
 #include "LinkList.h"
 #include "../../MemoryManager.h"
+#include "../../Utility.h"
 
 DSLIB_BEGIN
 
@@ -50,6 +51,10 @@ public:
 	virtual const_reference current() const;
 
 	virtual size_type size() const { return m_len; }
+
+	template< typename Pred >
+	size_type find(const T&, Pred) const;
+	size_type find(const T& e) const { return find(e, equal()); }
 
 protected:
 	virtual DNode<T>* locate(size_type) const;
@@ -333,6 +338,20 @@ typename DLinkList<T, Alloc>::reference DLinkList<T, Alloc>::current() {
 	CHECK_OPERATION_EXCEPTION(m_cur && m_cur != m_head);
 
 	return m_cur->val;
+}
+
+template < typename T, typename Alloc >
+template < typename Pred >
+typename DLinkList<T, Alloc>::size_type DLinkList<T, Alloc>::find(const T& e, Pred pred) const {
+	size_type ret = -1;
+	size_type i = 0;
+	for (DNode<T>* head = m_head->next; head && i < m_len; head = head->next, ++i) {
+		if (pred(head->val, e)) {
+			ret = i;
+			break;
+		}
+	}
+	return ret;
 }
 
 DSLIB_END

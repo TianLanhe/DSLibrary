@@ -3,6 +3,7 @@
 
 #include "LinkList.h"
 #include "../../MemoryManager.h"
+#include "../../Utility.h"
 
 DSLIB_BEGIN
 
@@ -48,6 +49,10 @@ public:
 	virtual const_reference current() const;
 
 	virtual size_type size() const { return m_len; }
+
+	template< typename Pred >
+	size_type find(const T&, Pred) const;
+	size_type find(const T& e) const { return find(e, equal()); }
 
 protected:
 	SNode<T>* locate(size_type) const;
@@ -260,10 +265,8 @@ typename SLinkList<T, Alloc>::reference SLinkList<T, Alloc>::current() {
 }
 
 template < typename T, typename Alloc >
-SNode<T>* SLinkList<T, Alloc>::__reverse(SNode<T>* node){
-	if (node == nullptr)
-		return nullptr;
-	else if (node->next == nullptr)
+SNode<T>* SLinkList<T, Alloc>::__reverse(SNode<T>* node) {
+	if (node == nullptr || node->next == nullptr)
 		return node;
 	else {
 		SNode<T>* ret;
@@ -332,6 +335,20 @@ void SLinkList<T, Alloc>::resize(size_type n, const_reference val) {
 			++m_len;
 		}
 	}
+}
+
+template < typename T, typename Alloc >
+template < typename Pred >
+typename SLinkList<T, Alloc>::size_type SLinkList<T, Alloc>::find(const T& e, Pred pred) const {
+	size_type ret = -1;
+	size_type i = 0;
+	for (SNode<T>* head = m_head->next; head && i < m_len; head = head->next, ++i) {
+		if (pred(head->val, e)) {
+			ret = i;
+			break;
+		}
+	}
+	return ret;
 }
 
 DSLIB_END

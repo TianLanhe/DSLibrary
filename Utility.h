@@ -42,6 +42,18 @@ namespace DSLib {
 		return static_cast<T&&>(t);
 	}
 
+	// 小于 functor
+	struct less {
+		template < typename T1, typename T2 >
+		bool operator()(const T1& t1, const T2& t2) { return t1 < t2; }
+	};
+
+	// 相等 functor
+	struct equal {
+		template < typename T1, typename T2 >
+		bool operator()(const T1& t1, const T2& t2) { return t1 == t2; }
+	};
+
 }
 
 #endif // !UTILITY_H
