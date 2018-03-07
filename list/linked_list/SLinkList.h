@@ -50,7 +50,7 @@ public:
 
 	virtual size_type size() const { return m_len; }
 
-	template< typename Pred >
+	template < typename Pred >
 	size_type find(const T&, Pred) const;
 	size_type find(const T& e) const { return find(e, equal()); }
 

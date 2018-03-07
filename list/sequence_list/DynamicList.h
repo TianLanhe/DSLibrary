@@ -65,7 +65,7 @@ DynamicList<T>& DynamicList<T>::operator=(const DynamicList<T>& dl) {
 			clear();
 			m_alloc.deallocate(m_arr);
 
-			m_arr = m_alloc.allocate(m_capacity);
+			m_arr = m_alloc.allocate(dl.m_len);
 			// m_arr = new T*[dl.m_len];
 			CHECK_NO_MEMORY_EXCEPTION(m_arr);
 			m_capacity = dl.m_len;
@@ -118,6 +118,7 @@ void DynamicList<T>::grow(size_type capacity) {
 
 	m_arr = m_alloc.allocate(capacity);
 	// m_arr = new T*[capacity];
+	CHECK_NO_MEMORY_EXCEPTION(m_arr);
 	m_capacity = capacity;
 
 	for (size_type i = 0; i < m_len; ++i) {
