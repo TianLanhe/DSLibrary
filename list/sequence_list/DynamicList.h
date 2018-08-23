@@ -22,7 +22,7 @@ public:
 	void resize(size_type, const_reference val = T());
 	void reserve(size_type n) { grow(n); }
 
-	virtual void swap(DynamicList<T>& obj) { SeqList<T>::swap(obj); }
+	virtual void swap(DynamicList<T>& obj);
 
 private:
 	void grow(size_type n = 0);
@@ -148,6 +148,16 @@ void DynamicList<T>::resize(size_type n, const_reference val) {
 			--m_len;
 		}
 	}
+}
+
+template<typename T>
+void DynamicList<T>::swap(DynamicList<T>& obj){
+	SeqList<T>::swap(obj);
+
+	size_type temp;
+	temp = m_capacity;
+	m_capacity = obj.m_capacity;
+	obj.m_capacity = temp;
 }
 
 DSLIB_END
