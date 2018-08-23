@@ -33,9 +33,7 @@ void swap(CLinkList<T, Alloc>& a, CLinkList<T, Alloc> b) {
 
 template < typename T, typename Alloc >
 CLinkList<T, Alloc>::CLinkList(const CLinkList<T, Alloc>& obj) {
-	m_head = m_alloc.allocate();
-	CHECK_NO_MEMORY_EXCEPTION(m_head);
-	m_head->next = nullptr;
+	m_head->next = m_head;
 
 	SNode<T> *head = m_head;
 	for (SNode<T> *ptrH = obj.m_head->next; ptrH != obj.m_head; ptrH = ptrH->next) {

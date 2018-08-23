@@ -9,7 +9,7 @@ template < typename T, size_t N >
 class StaticDLinkList : public DLinkList<T, StaticMemoryManager<DNode<T>, N + 1>> {
 
 public:
-	size_type capacity() { return N; }
+	size_type capacity() const { return N; }
 
 };
 

@@ -43,8 +43,6 @@ CDLinkList<T, Alloc>::CDLinkList() {
 
 template < typename T, typename Alloc >
 CDLinkList<T, Alloc>::CDLinkList(const CDLinkList<T, Alloc>& obj) {
-	m_head = m_alloc.allocate();
-	CHECK_NO_MEMORY_EXCEPTION(m_head);
 	m_head->next = m_head;
 	m_head->pre = m_head;
 
