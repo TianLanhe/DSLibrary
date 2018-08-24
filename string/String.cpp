@@ -1,18 +1,17 @@
 #include "String.h"
-#include "cstring"
+#include <cstring>
+#include <iostream>
 
 using namespace DSLib;
 using namespace std;
 
 typename const String::size_type String::npos = (String::size_type)(-1);
 
-String::String() {
+String::String() : m_len(0), m_capacity(0) {
 	m_content = new char[1];
 	CHECK_NO_MEMORY_EXCEPTION(m_content);
 
 	m_content[0] = '\0';
-	m_capacity = 0;
-	m_len = 0;
 }
 
 String::String(const char* arr) {
@@ -77,8 +76,8 @@ String& String::assign(const char* arr) {
 
 	size_type len = strlen(arr);
 
-	if (m_capacity < m_len + len)
-		grow(m_len + len);
+	if (m_capacity < len)
+		grow(len);
 
 	strcpy(m_content, arr);
 
@@ -86,8 +85,8 @@ String& String::assign(const char* arr) {
 }
 
 String& String::assign(size_type n, char ch) {
-	if (m_capacity < m_len + n)
-		grow(m_len + n);
+	if (m_capacity < n)
+		grow(n);
 
 	size_type i;
 	for (i = 0; i < n; ++i)
@@ -130,8 +129,8 @@ typename String::size_type String::copy(char* buffer, size_type length, size_typ
 
 	size_type i;
 	for (i = pos; i < pos + len; ++i)
-		buffer[i] = m_content[i];
-	buffer[i] = '\0';
+		buffer[i-pos] = m_content[i];
+	buffer[i-pos] = '\0';
 
 	return len;
 }
@@ -281,3 +280,17 @@ bool DSLib::operator>(const char* a, const String& b) { return b < a; }
 bool DSLib::operator>=(const String& a, const String& b) { return !(a < b); }
 bool DSLib::operator>=(const String& a, const char* b) { return !(a < b); }
 bool DSLib::operator>=(const char* a, const String& b) { return !(a < b); }
+
+ostream& operator<< (ostream& os, const string& str){
+	if(os){
+		os << str.c_str();
+	}
+	return os;
+}
+
+istream& operator>> (istream& is, string& str){
+	if(is){
+		// TODO
+	}
+	return is;
+}

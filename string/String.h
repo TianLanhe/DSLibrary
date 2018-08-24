@@ -102,8 +102,7 @@ public:
 	size_type capacity() const { return m_capacity; }
 
 	void reserve(size_type);
-	void resize(size_type n) { return resize(n, '\0'); }
-	void resize(size_type, char);
+	void resize(size_type, char ch = '\0');
 
 	void shrink_to_fit();
 
@@ -152,6 +151,12 @@ bool operator>(const char*, const String&);
 bool operator>=(const String&, const String&);
 bool operator>=(const String&, const char*);
 bool operator>=(const char*, const String&);
+
+class ostream;
+class istream;
+
+ostream& operator<< (ostream&, const string&);
+istream& operator>> (istream&, string&);
 
 DSLIB_END
 
