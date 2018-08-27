@@ -42,15 +42,15 @@ public:
 
 	void clear();
 
-	String& remove(size_type, size_type);
+	String& remove(size_type pos = 0, size_type len = npos);
 
-	//size_type find(const String&, size_type pos = 0)const;
-	//size_type find(const char*, size_type pos = 0)const;
-	//size_type find(char, size_type pos = 0)const;
+	size_type find(const String& str, size_type pos = 0) const { return find(str.c_str(),pos); }
+	size_type find(const char*, size_type pos = 0) const;
+	size_type find(char, size_type pos = 0) const;
 
-	//size_type rfind(const String&, size_type pos = npos)const;
-	//size_type rfind(const char*, size_type pos = npos)const;
-	//size_type rfind(char, size_type pos = npos)const;
+	size_type rfind(const String& str, size_type pos = npos) const { return rfind(str,c_str(),pos); }
+	size_type rfind(const char*, size_type pos = npos) const;
+	size_type rfind(char, size_type pos = npos) const;
 
 	//size_type find_first_not_of(const String&, size_type pos = 0)const;
 	//size_type find_first_not_of(const char*, size_type pos = 0)const;
@@ -109,7 +109,20 @@ public:
 	void swap(String&);
 
 private:
+	class Locator {
+	public:
+		typename String::size_type size_type;
+		Locator(size_type len):m_len(len){ }
+		virtual size_type operator()(size_type) = 0;
+	protected:
+		size_type m_len;
+	};
+
+private:
 	void grow(size_type n = 0);		// 传入的容量不包括'\0'，即要分配的空间为形参+1，若形参为0，则现有容量翻倍
+
+	void getNext(size_type*,const char*,const Locator&);
+	size_type kmp_find(const char*,size_type,const Locator&);
 
 public:
 	static const size_type npos;
