@@ -43,15 +43,11 @@ typename StackQueue<T, Stack>::reference StackQueue<T, Stack>::back() {
 
 	if (m_in.size() != 0)		// 如果进入栈还有数据，则栈顶元素为队尾元素
 		return m_in.top();
-
-	Stack tmpStack;				// 如果进入栈没有数据了，则退出栈的栈底元素为队尾元素，这时候复杂度高一点
-	transfer(m_out, tmpStack, m_out.size() - 1);
-
-	reference ret = m_out.top();
-
-	transfer(tmpStack, m_out, tmpStack.size());
-
-	return ret;
+	else{						// 如果进入栈没有数据了，则退出栈的栈底元素为队尾元素，这时候复杂度高一点
+		transfer(m_out, m_in, m_out.size());
+		reference ret = m_in.top();
+		return ret;
+	}
 }
 
 template < typename T, typename Stack >
@@ -60,15 +56,11 @@ typename StackQueue<T, Stack>::const_reference StackQueue<T, Stack>::back() cons
 
 	if (m_in.size() != 0)		// 如果进入栈还有数据，则栈顶元素为队尾元素
 		return m_in.top();
-
-	Stack tmpStack;				// 如果进入栈没有数据了，则退出栈的栈底元素为队尾元素，这时候复杂度高一点
-	transfer(m_out, tmpStack, m_out.size() - 1);
-
-	const_reference ret = m_out.top();
-
-	transfer(tmpStack, m_out, tmpStack.size());
-
-	return ret;
+	else{						// 如果进入栈没有数据了，则退出栈的栈底元素为队尾元素，这时候复杂度高一点
+		transfer(m_out, m_in, m_out.size());
+		const_reference ret = m_in.top();
+		return ret;
+	}
 }
 
 template < typename T, typename Stack >

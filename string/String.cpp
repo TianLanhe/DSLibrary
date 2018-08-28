@@ -1,18 +1,31 @@
 #include "String.h"
-#include "cstring"
+#include <cstring>
+#include <iostream>
 
 using namespace DSLib;
 using namespace std;
 
 typename const String::size_type String::npos = (String::size_type)(-1);
 
-String::String() {
+class Forward : public Locator {
+public:
+	Forward(size_type len):Locator(len){ }
+	size_type operator()(size_type i) { return i;}
+};
+
+class Backward : public Locator {
+public:
+	Backward(size_type len):Locator(len){ }
+	size_type operator()(size_type i) { return m_len - 1 - i;}
+};
+
+//////////////////////////////////////////////
+
+String::String() : m_len(0), m_capacity(0) {
 	m_content = new char[1];
 	CHECK_NO_MEMORY_EXCEPTION(m_content);
 
 	m_content[0] = '\0';
-	m_capacity = 0;
-	m_len = 0;
 }
 
 String::String(const char* arr) {
@@ -77,8 +90,8 @@ String& String::assign(const char* arr) {
 
 	size_type len = strlen(arr);
 
-	if (m_capacity < m_len + len)
-		grow(m_len + len);
+	if (m_capacity < len)
+		grow(len);
 
 	strcpy(m_content, arr);
 	m_len = len;
@@ -132,8 +145,8 @@ typename String::size_type String::copy(char* buffer, size_type length, size_typ
 
 	size_type i;
 	for (i = pos; i < pos + len; ++i)
-		buffer[i] = m_content[i];
-	buffer[i] = '\0';
+		buffer[i-pos] = m_content[i];
+	buffer[i-pos] = '\0';
 
 	return len;
 }
@@ -159,6 +172,95 @@ void String::set(size_type i, const_reference e) {
 void String::clear() {
 	m_len = 0;
 	m_content[0] = '\0';
+}
+
+String& String::remove(size_type pos, size_type len){
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
+
+	if(len > m_len - pos)
+		len = m_len - pos;
+
+	for (size_type i = pos + len; i <= m_len; ++i){
+		m_content[i - len] = m_content[i];
+	}
+
+	m_len -= len;
+
+	return *this;
+}
+
+String& String::insert(size_type pos, const char* str){
+	CHECK_INDEX_OUT_OF_BOUNDS(pos <= m_len);
+	CHECK_PARAMETER_EXCEPTION(str);
+
+	size_type strLen = strlen(str);
+
+	if(m_capacity < m_len + strLen)
+		grow(m_len + strLen)
+
+	for(size_type i = m_len; i >= pos; --i)
+		m_content[i + strLen] = m_content[i];
+	for(size_type i = 0; i < strLen; ++i)
+		m_content[i + pos] = str[i];
+
+	m_len += strLen;
+
+	return *this;
+}
+
+String& String::insert(size_type pos, size_type n, char ch){
+	CHECK_INDEX_OUT_OF_BOUNDS(pos <= m_len);
+
+	if(m_capacity < m_len + n)
+		grow(m_len + n)
+
+	for(size_type i = m_len; i >= pos; --i)
+		m_content[i + n] = m_content[i];
+	for(size_type i = 0; i < n; ++i)
+		m_content[i + pos] = ch;
+
+	m_len += n;
+
+	return *this;
+}
+
+String& String::replace(size_type pos, size_type len, const char* str){
+	remove(pos,len);
+	return insert(pos,str);
+}
+
+String& String::replace(size_type pos, size_type len, size_type n, char ch){
+	remove(pos,len);
+	return insert(pos,n,ch);
+}
+
+size_type String::find(const char* str, size_type pos = 0) const {
+	CHECK_PARAMETER_EXCEPTION(str);
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
+
+	return kmp_find(str,pos,Forward());
+}
+
+size_type String::find(char ch, size_type pos = 0) const {
+	char arr[2] = { ch, '\0' };
+	return find(arr,pos);
+}
+
+size_type String::rfind(const char* str, size_type pos = npos) const {
+	CHECK_PARAMETER_EXCEPTION(str);
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
+
+	return kmp_find(str,pos,Backward());
+}
+
+size_type String::rfind(char, size_type pos = npos) const {
+	char arr[2] = { ch, '\0' };
+	return rfind(arr,pos);
+}
+
+void String::reserve(size_type n){
+	if(m_capacity < n)
+		grow(n);
 }
 
 void String::resize(size_type n, char ch) {
@@ -231,6 +333,59 @@ void String::grow(size_type capacity) {
 	delete[] temp;
 }
 
+size_type forward(size_type i){
+	return i;
+}
+
+size_type backward(size_type i){
+	return m_len - i -1;
+}
+
+void String::getNext(size_type* next,const char* substr,const Locator& locator){
+	next[0] = npos;
+	size_type i = 0;
+	size_type j = npos;
+	while(i < strlen(substr) - 1){
+		if(j == npos || substr[locator(i)] == substr[locator(j)]){
+			++i, ++j;
+			if(substr[locator(i)] == substr[locator(j)])
+				next[i] == next[j];
+			else
+				next[i] == j;
+		}else{
+			j = next[j];
+		}
+	}
+}
+
+size_type String::kmp_find(const char* substr,size_type startPos,const Locator& locator){
+	CHECK_PARAMETER_EXCEPTION(substr && getIndex);
+	CHECK_INDEX_OUT_OF_BOUNDS(startPos < m_len || startPos == npos);
+
+	size_type substrLen = strlen(substr);
+
+	if(substrLen == 0)
+		return 0;
+
+	size_type *next = new size_type[strlen(substr)];
+	getNext(next,substr,locator);
+
+	size_type i = startPos;
+	size_type j = 0;
+	while(i < m_len && j < strLen){
+		if(j == npos || m_content[locator(i)] == substr[locator(j)]){
+			++i;
+			++j;
+		}else{
+			j = next[j];
+		}
+	}
+
+	delete[] next;
+
+	return (j == strLen ? i - substrLen : npos);
+}
+
 void swap(String& a, String& b) {
 	a.swap(b);
 }
@@ -283,3 +438,26 @@ bool DSLib::operator>(const char* a, const String& b) { return b < a; }
 bool DSLib::operator>=(const String& a, const String& b) { return !(a < b); }
 bool DSLib::operator>=(const String& a, const char* b) { return !(a < b); }
 bool DSLib::operator>=(const char* a, const String& b) { return !(a < b); }
+
+ostream& operator<< (ostream& os, const string& str){
+	if(os){
+		os << str.c_str();
+	}
+	return os;
+}
+
+bool isspace(char ch){
+	return ch == '\t' || ch == '\r' || ch == '\n' || ch == ' ';
+}
+
+istream& operator>> (istream& is, string& str){
+	if(is){
+		char ch;
+		while(is >> ch){
+			if(isspace(ch))
+				break;
+			str.append(1,ch);
+		}
+	}
+	return is;
+}

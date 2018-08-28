@@ -110,8 +110,15 @@ void QueueStack<T, Queue>::swap(Queue*& a, Queue*& b) {
 
 template < typename T, typename Queue >
 void QueueStack<T, Queue>::swap(QueueStack<T, Queue>& obj) {
-	m_major->swap(*obj.m_major);
-	m_secondary->swap(*obj.m_secondary);
+	Queue* temp = m_major;
+	m_major = obj.m_major;
+	obj.m_major = temp;
+
+	temp = m_secondary;
+	m_secondary = obj.m_secondary;
+	obj.m_secondary = temp;
+	/*m_major->swap(*obj.m_major);
+	m_secondary->swap(*obj.m_secondary);*/
 }
 
 DSLIB_END
