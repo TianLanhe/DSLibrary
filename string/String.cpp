@@ -7,16 +7,16 @@ using namespace std;
 
 typename const String::size_type String::npos = (String::size_type)(-1);
 
-class Forward : public Locator {
+class Forward : public String::Locator {
 public:
-	Forward(size_type len):Locator(len){ }
-	size_type operator()(size_type i) { return i;}
+	Forward(size_type len) :Locator(len) { }
+	size_type operator()(size_type i) const { return i; }
 };
 
-class Backward : public Locator {
+class Backward : public String::Locator {
 public:
-	Backward(size_type len):Locator(len){ }
-	size_type operator()(size_type i) { return m_len - 1 - i;}
+	Backward(size_type len) :Locator(len) { }
+	size_type operator()(size_type i) const { return m_len - 1 - i; }
 };
 
 //////////////////////////////////////////////
@@ -69,7 +69,7 @@ String& String::append(const char* arr) {
 }
 
 String& String::append(size_type n, char ch) {
-	if (n == 0)
+	if (n == 0 || ch == '\0')
 		return *this;
 
 	if (m_capacity < m_len + n)
@@ -100,6 +100,11 @@ String& String::assign(const char* arr) {
 }
 
 String& String::assign(size_type n, char ch) {
+	if (n == 0 || ch == '\0') {
+		clear();
+		return *this;
+	}
+
 	if (m_capacity < n)
 		grow(n);
 
@@ -128,8 +133,8 @@ String String::substr(size_type pos, size_type length) const {
 
 	size_type i;
 	for (i = pos; i < len + pos; ++i)
-		arr[i-pos] = m_content[i];
-	arr[i-pos] = '\0';
+		arr[i - pos] = m_content[i];
+	arr[i - pos] = '\0';
 
 	String ret(arr);
 	delete[] arr;
@@ -145,8 +150,8 @@ typename String::size_type String::copy(char* buffer, size_type length, size_typ
 
 	size_type i;
 	for (i = pos; i < pos + len; ++i)
-		buffer[i-pos] = m_content[i];
-	buffer[i-pos] = '\0';
+		buffer[i - pos] = m_content[i];
+	//buffer[i - pos] = '\0';	不要加结束符，只需要复制内容即可
 
 	return len;
 }
@@ -174,13 +179,13 @@ void String::clear() {
 	m_content[0] = '\0';
 }
 
-String& String::remove(size_type pos, size_type len){
+String& String::remove(size_type pos, size_type len) {
 	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
 
-	if(len > m_len - pos)
+	if (len > m_len - pos)
 		len = m_len - pos;
 
-	for (size_type i = pos + len; i <= m_len; ++i){
+	for (size_type i = pos + len; i <= m_len; ++i) {
 		m_content[i - len] = m_content[i];
 	}
 
@@ -189,18 +194,18 @@ String& String::remove(size_type pos, size_type len){
 	return *this;
 }
 
-String& String::insert(size_type pos, const char* str){
+String& String::insert(size_type pos, const char* str) {
 	CHECK_INDEX_OUT_OF_BOUNDS(pos <= m_len);
 	CHECK_PARAMETER_EXCEPTION(str);
 
 	size_type strLen = strlen(str);
 
-	if(m_capacity < m_len + strLen)
-		grow(m_len + strLen)
+	if (m_capacity < m_len + strLen)
+		grow(m_len + strLen);
 
-	for(size_type i = m_len; i >= pos; --i)
+	for (size_type i = m_len; i >= pos; --i)
 		m_content[i + strLen] = m_content[i];
-	for(size_type i = 0; i < strLen; ++i)
+	for (size_type i = 0; i < strLen; ++i)
 		m_content[i + pos] = str[i];
 
 	m_len += strLen;
@@ -208,15 +213,15 @@ String& String::insert(size_type pos, const char* str){
 	return *this;
 }
 
-String& String::insert(size_type pos, size_type n, char ch){
+String& String::insert(size_type pos, size_type n, char ch) {
 	CHECK_INDEX_OUT_OF_BOUNDS(pos <= m_len);
 
-	if(m_capacity < m_len + n)
-		grow(m_len + n)
+	if (m_capacity < m_len + n)
+		grow(m_len + n);
 
-	for(size_type i = m_len; i >= pos; --i)
+	for (size_type i = m_len; i >= pos; --i)
 		m_content[i + n] = m_content[i];
-	for(size_type i = 0; i < n; ++i)
+	for (size_type i = 0; i < n; ++i)
 		m_content[i + pos] = ch;
 
 	m_len += n;
@@ -224,42 +229,48 @@ String& String::insert(size_type pos, size_type n, char ch){
 	return *this;
 }
 
-String& String::replace(size_type pos, size_type len, const char* str){
-	remove(pos,len);
-	return insert(pos,str);
+String& String::replace(size_type pos, size_type len, const char* str) {
+	remove(pos, len);
+	return insert(pos, str);
 }
 
-String& String::replace(size_type pos, size_type len, size_type n, char ch){
-	remove(pos,len);
-	return insert(pos,n,ch);
+String& String::replace(size_type pos, size_type len, size_type n, char ch) {
+	remove(pos, len);
+	return insert(pos, n, ch);
 }
 
-size_type String::find(const char* str, size_type pos = 0) const {
+String::size_type String::find(const char* str, size_type pos) const {
 	CHECK_PARAMETER_EXCEPTION(str);
 	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
 
-	return kmp_find(str,pos,Forward());
+	return kmp_find(str, pos, Forward(m_len), Forward(strlen(str)));
 }
 
-size_type String::find(char ch, size_type pos = 0) const {
-	char arr[2] = { ch, '\0' };
-	return find(arr,pos);
+String::size_type String::find(char ch, size_type pos) const {
+	for (size_type i = pos; i < m_len; ++i)
+		if (m_content[i] == ch)
+			return i;
+	return npos;
 }
 
-size_type String::rfind(const char* str, size_type pos = npos) const {
+String::size_type String::rfind(const char* str, size_type pos) const {
 	CHECK_PARAMETER_EXCEPTION(str);
 	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
 
-	return kmp_find(str,pos,Backward());
+	return kmp_find(str, pos, Backward(m_len), Backward(strlen(str)));
 }
 
-size_type String::rfind(char, size_type pos = npos) const {
-	char arr[2] = { ch, '\0' };
-	return rfind(arr,pos);
+String::size_type String::rfind(char ch, size_type pos) const {
+	size_type i = m_len;
+	while (i-- > 0) {
+		if (m_content[i] == ch)
+			return i;
+	}
+	return npos;
 }
 
-void String::reserve(size_type n){
-	if(m_capacity < n)
+void String::reserve(size_type n) {
+	if (m_capacity < n)
 		grow(n);
 }
 
@@ -333,57 +344,51 @@ void String::grow(size_type capacity) {
 	delete[] temp;
 }
 
-size_type forward(size_type i){
-	return i;
-}
-
-size_type backward(size_type i){
-	return m_len - i -1;
-}
-
-void String::getNext(size_type* next,const char* substr,const Locator& locator){
+void String::getNext(size_type* next, const char* substr, const Locator& locator) const {
 	next[0] = npos;
 	size_type i = 0;
 	size_type j = npos;
-	while(i < strlen(substr) - 1){
-		if(j == npos || substr[locator(i)] == substr[locator(j)]){
+	while (i < strlen(substr) - 1) {
+		if (j == npos || substr[locator(i)] == substr[locator(j)]) {
 			++i, ++j;
-			if(substr[locator(i)] == substr[locator(j)])
-				next[i] == next[j];
+			if (substr[locator(i)] == substr[locator(j)])
+				next[i] = next[j];
 			else
-				next[i] == j;
-		}else{
+				next[i] = j;
+		}
+		else {
 			j = next[j];
 		}
 	}
 }
 
-size_type String::kmp_find(const char* substr,size_type startPos,const Locator& locator){
-	CHECK_PARAMETER_EXCEPTION(substr && getIndex);
+String::size_type String::kmp_find(const char* substr, size_type startPos, const Locator& contentlocator, const Locator& locator) const {
+	CHECK_PARAMETER_EXCEPTION(substr);
 	CHECK_INDEX_OUT_OF_BOUNDS(startPos < m_len || startPos == npos);
 
 	size_type substrLen = strlen(substr);
 
-	if(substrLen == 0)
+	if (substrLen == 0)
 		return 0;
 
 	size_type *next = new size_type[strlen(substr)];
-	getNext(next,substr,locator);
+	getNext(next, substr, locator);
 
 	size_type i = startPos;
 	size_type j = 0;
-	while(i < m_len && j < strLen){
-		if(j == npos || m_content[locator(i)] == substr[locator(j)]){
+	while (i < m_len && (j < substrLen || j == npos)) {
+		if (j == npos || m_content[contentlocator(i)] == substr[locator(j)]) {
 			++i;
 			++j;
-		}else{
+		}
+		else {
 			j = next[j];
 		}
 	}
 
 	delete[] next;
 
-	return (j == strLen ? i - substrLen : npos);
+	return (j == substrLen ? i - substrLen : npos);
 }
 
 void swap(String& a, String& b) {
@@ -439,24 +444,24 @@ bool DSLib::operator>=(const String& a, const String& b) { return !(a < b); }
 bool DSLib::operator>=(const String& a, const char* b) { return !(a < b); }
 bool DSLib::operator>=(const char* a, const String& b) { return !(a < b); }
 
-ostream& operator<< (ostream& os, const string& str){
-	if(os){
+ostream& operator<< (ostream& os, const String& str) {
+	if (os) {
 		os << str.c_str();
 	}
 	return os;
 }
 
-bool isspace(char ch){
+bool isspace(char ch) {
 	return ch == '\t' || ch == '\r' || ch == '\n' || ch == ' ';
 }
 
-istream& operator>> (istream& is, string& str){
-	if(is){
+istream& operator >> (istream& is, String& str) {
+	if (is) {
 		char ch;
-		while(is >> ch){
-			if(isspace(ch))
+		while (is >> ch) {
+			if (isspace(ch))
 				break;
-			str.append(1,ch);
+			str.append(1, ch);
 		}
 	}
 	return is;
