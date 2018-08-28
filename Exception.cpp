@@ -38,8 +38,10 @@ Exception::Exception(const Exception& e) {
 
 Exception& Exception::operator=(const Exception& e) {
 	if (this != &e) {
-		free(m_message);
-		free(m_location);
+		if (m_message)
+			free(m_message);
+		if (m_location)
+			free(m_location);
 		m_message = strdup(e.m_message);
 		m_location = strdup(e.m_location);
 	}

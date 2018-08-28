@@ -81,18 +81,20 @@ String& String::assign(const char* arr) {
 		grow(m_len + len);
 
 	strcpy(m_content, arr);
+	m_len = len;
 
 	return *this;
 }
 
 String& String::assign(size_type n, char ch) {
-	if (m_capacity < m_len + n)
-		grow(m_len + n);
+	if (m_capacity < n)
+		grow(n);
 
 	size_type i;
 	for (i = 0; i < n; ++i)
 		m_content[i] = ch;
 	m_content[i] = '\0';
+	m_len = n;
 
 	return *this;
 }
@@ -113,8 +115,8 @@ String String::substr(size_type pos, size_type length) const {
 
 	size_type i;
 	for (i = pos; i < len + pos; ++i)
-		arr[i] = m_content[i];
-	arr[i] = '\0';
+		arr[i-pos] = m_content[i];
+	arr[i-pos] = '\0';
 
 	String ret(arr);
 	delete[] arr;
