@@ -247,6 +247,8 @@ String::size_type String::find(const char* str, size_type pos) const {
 }
 
 String::size_type String::find(char ch, size_type pos) const {
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
+
 	for (size_type i = pos; i < m_len; ++i)
 		if (m_content[i] == ch)
 			return i;
@@ -261,7 +263,9 @@ String::size_type String::rfind(const char* str, size_type pos) const {
 }
 
 String::size_type String::rfind(char ch, size_type pos) const {
-	size_type i = m_len;
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
+
+	size_type i = (pos == npos ? m_len : pos + 1);
 	while (i-- > 0) {
 		if (m_content[i] == ch)
 			return i;
@@ -371,10 +375,13 @@ String::size_type String::kmp_find(const char* substr, size_type startPos, const
 	if (substrLen == 0)
 		return 0;
 
+	if (startPos == npos)
+		startPos = m_len - 1;
+
 	size_type *next = new size_type[strlen(substr)];
 	getNext(next, substr, locator);
 
-	size_type i = startPos;
+	size_type i = contentlocator(startPos);
 	size_type j = 0;
 	while (i < m_len && (j < substrLen || j == npos)) {
 		if (j == npos || m_content[contentlocator(i)] == substr[locator(j)]) {
@@ -388,7 +395,7 @@ String::size_type String::kmp_find(const char* substr, size_type startPos, const
 
 	delete[] next;
 
-	return (j == substrLen ? i - substrLen : npos);
+	return (j == substrLen ? contentlocator(i - substrLen) : npos);
 }
 
 void swap(String& a, String& b) {

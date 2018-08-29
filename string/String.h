@@ -3,6 +3,8 @@
 
 #include "../Object.h"
 
+#include <iostream>
+
 DSLIB_BEGIN
 
 class String : public Object<char> {
