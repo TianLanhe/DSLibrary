@@ -54,21 +54,21 @@ public:
 	size_type rfind(const char*, size_type pos = npos) const;
 	size_type rfind(char, size_type pos = npos) const;
 
-	//size_type find_first_not_of(const String&, size_type pos = 0)const;
-	//size_type find_first_not_of(const char*, size_type pos = 0)const;
-	//size_type find_first_not_of(char, size_type pos = 0)const;
+	size_type find_first_not_of(const String& str, size_type pos = 0) const { return find_first_not_of(str.c_str(), pos); }
+	size_type find_first_not_of(const char*, size_type pos = 0) const;
+	size_type find_first_not_of(char, size_type pos = 0) const;
 
-	//size_type find_first_of(const String&, size_type pos = 0)const;
-	//size_type find_first_of(const char*, size_type pos = 0)const;
-	//size_type find_first_of(char, size_type pos = 0)const;
+	size_type find_first_of(const String&, size_type pos = 0) const { return find_first_of(str.c_str(), pos); }
+	size_type find_first_of(const char*, size_type pos = 0)const;
+	size_type find_first_of(char, size_type pos = 0)const;
 
-	//size_type find_last_not_of(const String&, size_type pos = 0)const;
-	//size_type find_last_not_of(const char*, size_type pos = 0)const;
-	//size_type find_last_not_of(char, size_type pos = 0)const;
+	size_type find_last_not_of(const String& str, size_type pos = 0) const { return find_last_not_of(str.c_str(), pos); }
+	size_type find_last_not_of(const char*, size_type pos = 0)const;
+	size_type find_last_not_of(char, size_type pos = 0)const;
 
-	//size_type find_last_of(const String&, size_type pos = 0)const;
-	//size_type find_last_of(const char*, size_type pos = 0)const;
-	//size_type find_last_of(char, size_type pos = 0)const;
+	size_type find_last_of(const String& str, size_type pos = 0) const { return find_last_of(str.c_str(), pos); }
+	size_type find_last_of(const char*, size_type pos = 0)const;
+	size_type find_last_of(char, size_type pos = 0)const;
 
 	String& insert(size_type pos, const String& str) { return insert(pos, str.c_str()); }
 	String& insert(size_type, const char*);

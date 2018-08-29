@@ -259,7 +259,8 @@ String::size_type String::rfind(const char* str, size_type pos) const {
 	CHECK_PARAMETER_EXCEPTION(str);
 	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
 
-	return kmp_find(str, pos, Backward(m_len), Backward(strlen(str)));
+	size_type ret = kmp_find(str, pos, Backward(m_len), Backward(strlen(str)));
+	return (ret == npos ? npos : ret + 1 - strlen(str));
 }
 
 String::size_type String::rfind(char ch, size_type pos) const {
@@ -271,6 +272,107 @@ String::size_type String::rfind(char ch, size_type pos) const {
 			return i;
 	}
 	return npos;
+}
+
+size_type String::find_first_not_of(const char* str, size_type pos) const {
+	CHECK_PARAMETER_EXCEPTION(str);
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
+
+	size_type len = strlen(str);
+
+	size_type j;
+	for (size_type i = pos; i < m_len; ++i){
+		for(j=0;j<len;++j)
+			if (m_content[i] == ch)
+				break;
+		if(j==len)
+			return i;
+	}
+
+	return npos;
+}
+
+size_type String::find_first_not_of(char ch, size_type pos) const {
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
+
+	for (size_type i = pos; i < m_len; ++i)
+		if (m_content[i] != ch)
+			return i;
+	return npos;
+}
+
+size_type String::find_first_of(const char* str, size_type pos)const{
+	CHECK_PARAMETER_EXCEPTION(str);
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len);
+
+	size_type len = strlen(str);
+
+	if(len == 0)
+		return npos;
+
+	size_type j;
+	for (size_type i = pos; i < m_len; ++i)
+		for(j=0;j<len;++j)
+			if (m_content[i] == ch)
+				return i;
+
+	return npos;
+}
+
+size_type String::find_first_of(char ch, size_type pos)const{
+	return find(ch,pos);
+}
+
+size_type String::find_last_not_of(const char* str, size_type pos)const{
+	CHECK_PARAMETER_EXCEPTION(str);
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
+
+	size_type len = strlen(str);
+
+	size_type i = (pos == npos ? m_len : pos + 1);
+	size_type j;
+	while (i-- > 0) {
+		for(j=0;j<len;++j)
+			if (m_content[i] == ch)
+				break;
+		if(j==len)
+			return i;
+	}
+	return npos;
+}
+
+size_type String::find_last_not_of(char ch, size_type pos)const{
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
+
+	size_type i = (pos == npos ? m_len : pos + 1);
+	while (i-- > 0) {
+		if (m_content[i] != ch)
+			return i;
+	}
+	return npos;
+}
+
+size_type String::find_last_of(const char* str, size_type pos)const{
+	CHECK_PARAMETER_EXCEPTION(str);
+	CHECK_INDEX_OUT_OF_BOUNDS(pos < m_len || pos == npos);
+
+	size_type len = strlen(str);
+
+	if(len == 0)
+		return npos;
+
+	size_type i = (pos == npos ? m_len : pos + 1);
+	size_type j;
+	while (i-- > 0) 
+		for(j=0;j<len;++j)
+			if (m_content[i] == ch)
+				return i;
+
+	return npos;
+}
+
+size_type String::find_last_of(char ch, size_type pos)const{
+	return rfind(ch,pos);
 }
 
 void String::reserve(size_type n) {
