@@ -197,10 +197,8 @@ String& String::remove(size_type pos, size_type len) {
 	return *this;
 }
 
-String& String::remove(const char* str,size_type count){
-	CHECK_PARAMETER_EXCEPTION(str);
-
-	size_type len = strlen(str);
+String& String::remove(const String& str,size_type count){
+	size_type len = str.size();
 
 	if(len == 0)
 		return *this;
@@ -287,7 +285,7 @@ String& String::replace(size_type pos, size_type len, size_type n, char ch) {
 	return insert(pos, n, ch);
 }
 
-String& replace(const char* oldStr,const char* newStr,size_type count){
+String& String::replace(const char* oldStr,const char* newStr,size_type count){
 	CHECK_PARAMETER_EXCEPTION(oldStr && newStr);
 
 	size_type len = strlen(oldStr);
@@ -295,16 +293,18 @@ String& replace(const char* oldStr,const char* newStr,size_type count){
 	if(len == 0)
 		return *this;
 
+	size_type newStrLen = strlen(newStr);
 	size_type index = 0;
 	while(count-- > 0 && (index = find(oldStr,index)) != npos){
 		replace(index,len,newStr);
+		index += newStrLen;
 	}
 
 	return *this;
 }
 
-String& replace(const char* str,size_type n,char ch){
-	CHECK_PARAMETER_EXCEPTION(str);
+String& String::replace(const char* oldStr,size_type n,char ch,size_type count){
+	CHECK_PARAMETER_EXCEPTION(oldStr);
 
 	size_type len = strlen(oldStr);
 
@@ -314,12 +314,13 @@ String& replace(const char* str,size_type n,char ch){
 	size_type index = 0;
 	while(count-- > 0 && (index = find(oldStr,index)) != npos){
 		replace(index,len,n,ch);
+		index += n;
 	}
 
 	return *this;
 }
 
-String& rreplace(const char* oldStr,const char* newStr,size_type count){
+String& String::rreplace(const char* oldStr,const char* newStr,size_type count){
 	CHECK_PARAMETER_EXCEPTION(oldStr && newStr);
 
 	size_type len = strlen(oldStr);
@@ -327,16 +328,22 @@ String& rreplace(const char* oldStr,const char* newStr,size_type count){
 	if(len == 0)
 		return *this;
 
+	size_type newStrLen = strlen(newStr);
 	size_type index = npos;
-	while(count-- > 0 && (index = find(oldStr,index)) != npos){
+	while(count-- > 0 && (index = rfind(oldStr,index)) != npos){
 		replace(index,len,newStr);
+		
+		if (index == 0)
+			break;
+		else
+			--index;
 	}
 
 	return *this;
 }
 
-String& rreplace(const char* oldStr,size_type n,char ch){
-	CHECK_PARAMETER_EXCEPTION(str);
+String& String::rreplace(const char* oldStr,size_type n,char ch,size_type count){
+	CHECK_PARAMETER_EXCEPTION(oldStr);
 
 	size_type len = strlen(oldStr);
 
@@ -344,8 +351,13 @@ String& rreplace(const char* oldStr,size_type n,char ch){
 		return *this;
 
 	size_type index = npos;
-	while(count-- > 0 && (index = find(oldStr,index)) != npos){
+	while(count-- > 0 && (index = rfind(oldStr,index)) != npos){
 		replace(index,len,n,ch);
+
+		if (index == 0)
+			break;
+		else
+			--index;
 	}
 
 	return *this;

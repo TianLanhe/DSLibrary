@@ -46,11 +46,12 @@ public:
 
 	String& remove(size_type pos = 0, size_type len = npos);
 
-	String& remove(const String& str,size_type count = npos){ return remove(str.c_str(),count); }
-	String& remove(const char*,size_type count = npos);
+	String& remove(const String& str, size_type count = npos);// { return remove(str.c_str(), count); }
+	//String& remove(const char*, size_type count = npos);
+	// 因为这个方法(const char*,size_type)会跟(size_type,size_type)形参匹配冲突，所以只能去掉这个
 
-	String& rremove(const String& str,size_type count = npos){ return rremove(str.c_str(),count); }
-	String& rremove(const char*,size_type count = npos);
+	String& rremove(const String& str, size_type count = npos) { return rremove(str.c_str(), count); }
+	String& rremove(const char*, size_type count = npos);
 
 	size_type find(const String& str, size_type pos = 0) const { return find(str.c_str(), pos); }
 	size_type find(const char*, size_type pos = 0) const;
@@ -98,19 +99,19 @@ public:
 	String& replace(size_type, size_type, const char*);
 	String& replace(size_type, size_type, size_type, char);
 
-	String& replace(const char*,const char*,size_type);
-	String& replace(const char* arr,const String& str,size_type count = npos){ return replace(arr,str.c_str(),count); }
-	String& replace(const String& str,const char* arr,size_type count = npos){ return replace(str.c_str(),arr,count); }
-	String& replace(const String& str,const String& str2,size_type count = npos){ return replace(str.c_str(),str2.c_str(),count); }
-	String& replace(const String& str,size_type n,char ch){ return replace(str.c_str(),n,ch); }
-	String& replace(const char*,size_type,char);
+	String& replace(const char*, const char*, size_type count = npos);
+	String& replace(const char* arr, const String& str, size_type count = npos) { return replace(arr, str.c_str(), count); }
+	String& replace(const String& str, const char* arr, size_type count = npos) { return replace(str.c_str(), arr, count); }
+	String& replace(const String& str, const String& str2, size_type count = npos) { return replace(str.c_str(), str2.c_str(), count); }
+	String& replace(const String& str, size_type n, char ch, size_type count = npos) { return replace(str.c_str(), n, ch, count); }
+	String& replace(const char*, size_type, char, size_type count = npos);
 
-	String& rreplace(const char*,const char*,size_type);
-	String& rreplace(const char* arr,const String& str,size_type count = npos){ return rreplace(arr,str.c_str(),count); }
-	String& rreplace(const String& str,const char* arr,size_type count = npos){ return rreplace(str.c_str(),arr,count); }
-	String& rreplace(const String& str,const String& str2,size_type count = npos){ return rreplace(str.c_str(),str2.c_str(),count); }
-	String& rreplace(const String& str,size_type n,char ch){ return rreplace(str.c_str(),n,ch); }
-	String& rreplace(const char*,size_type,char);
+	String& rreplace(const char*, const char*, size_type count = npos);
+	String& rreplace(const char* arr, const String& str, size_type count = npos) { return rreplace(arr, str.c_str(), count); }
+	String& rreplace(const String& str, const char* arr, size_type count = npos) { return rreplace(str.c_str(), arr, count); }
+	String& rreplace(const String& str, const String& str2, size_type count = npos) { return rreplace(str.c_str(), str2.c_str(), count); }
+	String& rreplace(const String& str, size_type n, char ch, size_type count = npos) { return rreplace(str.c_str(), n, ch); }
+	String& rreplace(const char*, size_type, char, size_type count = npos);
 
 	reference back() { return get(size() - 1); }
 	const_reference back() const { return get(size() - 1); }
