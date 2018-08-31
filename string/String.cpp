@@ -197,6 +197,38 @@ String& String::remove(size_type pos, size_type len) {
 	return *this;
 }
 
+String& String::remove(const char* str,size_type count){
+	CHECK_PARAMETER_EXCEPTION(str);
+
+	size_type len = strlen(str);
+
+	if(len == 0)
+		return *this;
+
+	size_type index = 0;
+	while(count-- > 0 && (index = find(str,index)) != npos){
+		remove(index,len);
+	}
+
+	return *this;
+}
+
+String& String::rremove(const char* str,size_type count){
+	CHECK_PARAMETER_EXCEPTION(str);
+
+	size_type len = strlen(str);
+
+	if(len == 0)
+		return *this;
+
+	size_type index = npos;
+	while(count-- > 0 && (index = rfind(str,index)) != npos){
+		remove(index,len);
+	}
+
+	return *this;
+}
+
 String& String::insert(size_type pos, const char* str) {
 	CHECK_INDEX_OUT_OF_BOUNDS(pos <= m_len);
 	CHECK_PARAMETER_EXCEPTION(str);
@@ -253,6 +285,70 @@ String& String::replace(size_type pos, size_type len, size_type n, char ch) {
 
 	remove(pos, len);
 	return insert(pos, n, ch);
+}
+
+String& replace(const char* oldStr,const char* newStr,size_type count){
+	CHECK_PARAMETER_EXCEPTION(oldStr && newStr);
+
+	size_type len = strlen(oldStr);
+
+	if(len == 0)
+		return *this;
+
+	size_type index = 0;
+	while(count-- > 0 && (index = find(oldStr,index)) != npos){
+		replace(index,len,newStr);
+	}
+
+	return *this;
+}
+
+String& replace(const char* str,size_type n,char ch){
+	CHECK_PARAMETER_EXCEPTION(str);
+
+	size_type len = strlen(oldStr);
+
+	if(len == 0)
+		return *this;
+
+	size_type index = 0;
+	while(count-- > 0 && (index = find(oldStr,index)) != npos){
+		replace(index,len,n,ch);
+	}
+
+	return *this;
+}
+
+String& rreplace(const char* oldStr,const char* newStr,size_type count){
+	CHECK_PARAMETER_EXCEPTION(oldStr && newStr);
+
+	size_type len = strlen(oldStr);
+
+	if(len == 0)
+		return *this;
+
+	size_type index = npos;
+	while(count-- > 0 && (index = find(oldStr,index)) != npos){
+		replace(index,len,newStr);
+	}
+
+	return *this;
+}
+
+String& rreplace(const char* oldStr,size_type n,char ch){
+	CHECK_PARAMETER_EXCEPTION(str);
+
+	size_type len = strlen(oldStr);
+
+	if(len == 0)
+		return *this;
+
+	size_type index = npos;
+	while(count-- > 0 && (index = find(oldStr,index)) != npos){
+		replace(index,len,n,ch);
+	}
+
+	return *this;
 }
 
 String::size_type String::find(const char* str, size_type pos) const {
