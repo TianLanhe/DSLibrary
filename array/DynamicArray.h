@@ -109,13 +109,16 @@ void DynamicArray<T>::grow(size_type newLen) {
 	if (newLen <= m_len)
 		return;
 
-	iterator temp = m_arr;
+	iterator temp = new T[newLen];
+	CHECK_NO_MEMORY_EXCEPTION(temp);
 
-	m_arr = new T[newLen];
-	CHECK_NO_MEMORY_EXCEPTION(m_arr);
 	for (size_type i = 0; i < m_len; ++i) {
-		m_arr[i] = temp[i];
+		temp[i] = m_arr[i];
 	}
+
+	iterator tmp = m_arr;
+	m_arr = temp;
+	temp = tmp;
 
 	m_len = newLen;
 

@@ -13,7 +13,7 @@ class SeqList : public List <T> {
 
 public:
 	SeqList() :m_len(0), m_arr(nullptr) {}
-	SeqList(size_type capacity);
+	SeqList(size_type capacity);		// 这里没有 explicit 没关系，这是抽象类，不可能创建对象
 	virtual ~SeqList();
 
 	virtual size_type insert(size_type, const_reference);
