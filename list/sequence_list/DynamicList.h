@@ -114,7 +114,7 @@ void DynamicList<T>::grow(size_type capacity) {
 	if (m_capacity >= capacity)
 		return;
 
-	T* temp = m_arr;
+	T* temp = m_arr;					// Review: 这里不是异常安全的
 
 	m_arr = m_alloc.allocate(capacity);
 	// m_arr = new T*[capacity];

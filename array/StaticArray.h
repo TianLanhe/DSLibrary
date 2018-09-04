@@ -18,7 +18,7 @@ public:
 	virtual size_type size() const { return N; }
 
 protected:
-	T m_space[N];
+	T m_space[N];		// 直接赋值或拷贝构造会复制数组，不需要额外重载赋值操作符和拷贝构造
 
 };
 

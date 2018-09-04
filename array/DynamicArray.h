@@ -9,7 +9,7 @@ template < typename T >
 class DynamicArray : public Array<T> {
 
 public:
-	DynamicArray(size_type i = 0);
+	explicit DynamicArray(size_type i = 0);
 	DynamicArray(const DynamicArray<T>& da);
 	DynamicArray<T>& operator=(const DynamicArray<T>& da);
 	~DynamicArray();
@@ -53,18 +53,20 @@ DynamicArray<T>::DynamicArray(const DynamicArray<T>& obj) {
 template<typename T>
 DynamicArray<T>& DynamicArray<T>::operator=(const DynamicArray<T>& da) {
 	if (this != &da) {
-		iterator temp = m_arr;
+		iterator temp = new T[da.m_len];
+		CHECK_NO_MEMORY_EXCEPTION(temp);
 
-		m_arr = new T[da.m_len];
-		CHECK_NO_MEMORY_EXCEPTION(m_arr);
-
-		for (size_type p = 0; p < m_len; ++p) {
-			m_arr[p] = da.m_arr[p];
+		for (size_type p = 0; p < da.m_len; ++p) {
+			temp[p] = da.m_arr[p];
 		}
 
-		delete[] temp;
+		iterator tmp = m_arr;
+		m_arr = temp;
+		temp = tmp;
 
 		m_len = da.m_len;
+
+		delete[] temp;
 	}
 	return *this;
 }
