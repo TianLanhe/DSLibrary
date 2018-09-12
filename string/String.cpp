@@ -735,7 +735,7 @@ bool isspace(char ch) {
 istream& operator >> (istream& is, String& str) {
 	if (is) {
 		char ch;
-		while (is >> ch) {
+		while (is.get(ch)) {
 			if (isspace(ch))
 				break;
 			str.append(1, ch);
