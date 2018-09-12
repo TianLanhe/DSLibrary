@@ -55,6 +55,7 @@ CDLinkList<T, Alloc>::CDLinkList(const CDLinkList<T, Alloc>& obj) {
 
 		++m_len;
 	}
+	m_head->pre = head;
 }
 
 template < typename T, typename Alloc >
