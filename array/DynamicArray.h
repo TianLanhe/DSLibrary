@@ -33,18 +33,18 @@ protected:
 
 template<typename T>
 DynamicArray<T>::DynamicArray(size_type i) {
-	m_len = i;
-
-	m_arr = new T[m_len];
+	m_arr = new T[i];
 	CHECK_NO_MEMORY_EXCEPTION(m_arr);
+
+	m_len = i;
 }
 
 template<typename T>
 DynamicArray<T>::DynamicArray(const DynamicArray<T>& obj) {
-	m_len = obj.m_len;
-
 	m_arr = new T[m_len];
 	CHECK_NO_MEMORY_EXCEPTION(m_arr);
+
+	m_len = obj.m_len;
 	for (size_type p = 0; p < m_len; ++p) {
 		m_arr[p] = obj.m_arr[p];
 	}
