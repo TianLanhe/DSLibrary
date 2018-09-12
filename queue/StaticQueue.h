@@ -87,14 +87,22 @@ template < typename T, size_t N >
 typename StaticQueue<T, N>::reference StaticQueue<T, N>::back() {
 	CHECK_OPERATION_EXCEPTION(m_rear != m_front);
 
-	return m_arr[m_rear - 1];
+	if (m_rear == 0)
+		return m_arr[N];
+	else
+		return m_arr[m_rear - 1];
+	// return m_arr[(m_rear + N) % (N + 1)];
 }
 
 template < typename T, size_t N >
 typename StaticQueue<T, N>::const_reference StaticQueue<T, N>::back() const {
 	CHECK_OPERATION_EXCEPTION(m_rear != m_front);
 
-	return m_arr[m_rear - 1];
+	if (m_rear == 0)
+		return m_arr[N];
+	else
+		return m_arr[m_rear - 1];
+	// return m_arr[(m_rear + N) % (N + 1)];
 }
 
 template < typename T, size_t N >
