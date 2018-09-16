@@ -25,6 +25,10 @@ public:
 	virtual void next();
 	virtual void prev();
 
+	template < typename Pred >
+	void merge(CDLinkList<T, Alloc>&, Pred);
+	void merge(CDLinkList<T, Alloc>& other) { return merge(other, DSLib::less()); }
+
 protected:
 	DNode<T>* locate(size_type) const;	// 根据位置选择较近的移动方式，在 m_len / 2 以内正向移动，否则逆向移动
 
@@ -191,6 +195,55 @@ DNode<T>* CDLinkList<T, Alloc>::locate(size_type pos) const {
 
 		return head;
 	}
+}
+
+template < typename T, typename Alloc >
+template < typename Pred >
+void CDLinkList<T, Alloc>::merge(CDLinkList<T, Alloc>& other, Pred pred) {
+	if (this == &other)
+		return;
+
+	m_len += other.m_len;
+	other.m_len = 0;
+
+	DNode<T> *first1 = m_head->next;
+	DNode<T> *first2 = other.m_head->next;
+
+	while (first1 != m_head && first2 != other.m_head) {
+		if (pred(first1->val, first2->val)) {
+			first1 = first1->next;
+		}
+		else {
+			DNode<T> *node = first2;
+			first2 = first2->next;
+			node->pre->next = first2;
+			first2->pre = node->pre;
+
+			DNode<T> *pre = first1->pre;
+			pre->next = node;
+			first1->pre = node;
+			node->next = first1;
+			node->pre = pre;
+		}
+	}
+
+	if (first2) {
+		DNode<T> *last = m_head->pre;
+
+		DNode<T> *last2 = first2;
+		while (last2->next != other.m_head)
+			last2 = last2->next;
+
+		last->next = first2;
+		first2->pre = last;
+
+		last2->next = m_head;
+		m_head->pre = last2;
+	}
+
+	other.m_head->next = other.m_head;
+	other.m_cur = nullptr;
+	other.m_step = 0;
 }
 
 DSLIB_END

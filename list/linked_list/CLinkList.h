@@ -24,6 +24,10 @@ public:
 
 	virtual void next();
 
+	template < typename Pred >
+	void merge(CLinkList<T, Alloc>&, Pred);
+	void merge(CLinkList<T, Alloc>& other) { return merge(other, DSLib::less()); }
+
 };
 
 template < typename T, typename Alloc > inline
@@ -144,6 +148,46 @@ void CLinkList<T, Alloc>::next() {
 		if (m_cur == m_head)
 			m_cur = m_cur->next;
 	}
+}
+
+template < typename T, typename Alloc >
+template < typename Pred >
+void CLinkList<T, Alloc>::merge(CLinkList<T, Alloc>& other, Pred pred) {
+	if (this == &other)
+		return;
+
+	m_len += other.m_len;
+	other.m_len = 0;
+
+	SNode<T>* pre = m_head;
+	SNode<T>* first1 = m_head->next;
+	SNode<T>* first2 = other.m_head->next;
+
+	while (first1 != m_head && first2 != other.m_head) {
+		if (pred(first1->val, first2->val)) {
+			pre = first1;
+			first1 = first1->next;
+		}
+		else {
+			SNode<T> *node = first2;
+			first2 = first2->next;
+
+			node->next = first1;
+			pre->next = node;
+			pre = node;
+		}
+	}
+
+	if (first2) {
+		pre->next = first2;
+		while (first2->next != other.m_head)
+			first2 = first2->next;
+		first2->next = m_head;
+	}
+
+	other.m_head->next = nullptr;
+	other.m_cur = nullptr;
+	other.m_step = 0;
 }
 
 DSLIB_END

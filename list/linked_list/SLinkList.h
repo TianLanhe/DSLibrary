@@ -54,10 +54,15 @@ public:
 	size_type find(const T&, Pred) const;
 	size_type find(const T& e) const { return find(e, equal()); }
 
+	template < typename Pred >
+	void merge(SLinkList<T, Alloc>&, Pred);
+	void merge(SLinkList<T, Alloc>& other) { return merge(other, DSLib::less()); }
+
 protected:
 	SNode<T>* locate(size_type) const;
 
 	SNode<T>* __reverse(SNode<T>*);		// 递归实现链表装置的函数
+	//SNode<T>* _merge();
 
 	SNode<T> *m_head;
 	size_type m_len;
@@ -349,6 +354,43 @@ typename SLinkList<T, Alloc>::size_type SLinkList<T, Alloc>::find(const T& e, Pr
 		}
 	}
 	return ret;
+}
+
+template < typename T, typename Alloc >
+template < typename Pred >
+void SLinkList<T, Alloc>::merge(SLinkList<T, Alloc>& other, Pred pred) {
+	if (this == &other)
+		return;
+
+	m_len += other.m_len;
+	other.m_len = 0;
+
+	SNode<T>* pre = m_head;
+	SNode<T>* first1 = m_head->next;
+	SNode<T>* first2 = other.m_head->next;
+
+	while (first1 && first2) {
+		if (pred(first1->val, first2->val)) {
+			pre = first1;
+			first1 = first1->next;
+		}
+		else {
+			SNode<T> *node = first2;
+			first2 = first2->next;
+
+			node->next = first1;
+			pre->next = node;
+			pre = node;
+		}
+	}
+
+	if (first2) {
+		pre->next = first2;
+	}
+
+	other.m_head->next = nullptr;
+	other.m_cur = nullptr;
+	other.m_step = 0;
 }
 
 DSLIB_END

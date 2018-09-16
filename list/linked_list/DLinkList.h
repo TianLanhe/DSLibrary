@@ -56,6 +56,10 @@ public:
 	size_type find(const T&, Pred) const;
 	size_type find(const T& e) const { return find(e, equal()); }
 
+	template < typename Pred >
+	void merge(DLinkList<T, Alloc>&, Pred);
+	void merge(DLinkList<T, Alloc>& other) { return merge(other, DSLib::less()); }
+
 protected:
 	virtual DNode<T>* locate(size_type) const;
 
@@ -352,6 +356,50 @@ typename DLinkList<T, Alloc>::size_type DLinkList<T, Alloc>::find(const T& e, Pr
 		}
 	}
 	return ret;
+}
+
+template < typename T, typename Alloc >
+template < typename Pred >
+void DLinkList<T, Alloc>::merge(DLinkList<T, Alloc>& other, Pred pred) {
+	if (this == &other)
+		return;
+
+	m_len += other.m_len;
+	other.m_len = 0;
+
+	DNode<T> *first1 = m_head->next;
+	DNode<T> *first2 = other.m_head->next;
+
+	while (first1 && first2) {
+		if (pred(first1->val, first2->val)) {
+			first1 = first1->next;
+		}
+		else {
+			DNode<T> *node = first2;
+			first2 = first2->next;
+			node->pre->next = first2;
+			first2->pre = node->pre;
+			
+			DNode<T> *pre = first1->pre;
+			pre->next = node;
+			first1->pre = node;
+			node->next = first1;
+			node->pre = pre;
+		}
+	}
+
+	if (first2) {
+		DNode<T> *last = m_head;
+		while (last->next)
+			last = last->next;
+
+		last->next = first2;
+		first2->pre = last;
+	}
+
+	other.m_head->next = nullptr;
+	other.m_cur = nullptr;
+	other.m_step = 0;
 }
 
 DSLIB_END
